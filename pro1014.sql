@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 04, 2024 at 12:52 PM
+-- Generation Time: Nov 04, 2024 at 01:12 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -182,8 +182,8 @@ ALTER TABLE `customers`
 --
 ALTER TABLE `detail_bills`
   ADD PRIMARY KEY (`id_detailbill`),
-  ADD KEY `id_product` (`id_product`),
-  ADD KEY `id_bill` (`id_bill`);
+  ADD KEY `id_bill` (`id_bill`),
+  ADD KEY `detail_bills_ibfk_1` (`id_product`);
 
 --
 -- Indexes for table `products`
@@ -273,7 +273,7 @@ ALTER TABLE `comments`
 -- Constraints for table `detail_bills`
 --
 ALTER TABLE `detail_bills`
-  ADD CONSTRAINT `detail_bills_ibfk_1` FOREIGN KEY (`id_product`) REFERENCES `products` (`id_product`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `detail_bills_ibfk_1` FOREIGN KEY (`id_product`) REFERENCES `products` (`id_product`) ON DELETE RESTRICT ON UPDATE RESTRICT,
   ADD CONSTRAINT `detail_bills_ibfk_2` FOREIGN KEY (`id_bill`) REFERENCES `bills` (`id_bill`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
