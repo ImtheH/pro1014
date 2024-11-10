@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 10, 2024 at 03:04 PM
+-- Generation Time: Nov 10, 2024 at 03:39 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -104,6 +104,7 @@ CREATE TABLE `detail_bills` (
 CREATE TABLE `products` (
   `id_product` int NOT NULL COMMENT 'Mã sản phẩm',
   `id_category` int NOT NULL COMMENT 'Mã loại hàng',
+  `id_variant` int NOT NULL COMMENT 'Mã biến thể',
   `firms` varchar(255) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Hãng của sản phẩm',
   `name` varchar(255) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Tên của sản phẩm',
   `price` int UNSIGNED NOT NULL COMMENT 'Giá của sản phẩm ',
@@ -143,6 +144,19 @@ CREATE TABLE `users` (
   `password` varchar(100) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Mật khẩu đăng nhặp của user',
   `role` tinyint NOT NULL DEFAULT '0' COMMENT '0 là khách hàng, 1 là nhân viên, 2 là quản trị',
   `day_registered` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Ngày đăng kí tài khoản của user '
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `variant`
+--
+
+CREATE TABLE `variant` (
+  `id_variant` int NOT NULL COMMENT 'Mã biến thể',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Tên biến thể',
+  `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Ngày tạo ',
+  `updated_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Ngày cập nhật'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -190,7 +204,8 @@ ALTER TABLE `detail_bills`
 --
 ALTER TABLE `products`
   ADD PRIMARY KEY (`id_product`),
-  ADD KEY `id_category` (`id_category`);
+  ADD KEY `id_category` (`id_category`),
+  ADD KEY `id_variant` (`id_variant`);
 
 --
 -- Indexes for table `rates`
@@ -205,6 +220,12 @@ ALTER TABLE `rates`
 --
 ALTER TABLE `users`
   ADD PRIMARY KEY (`id_user`);
+
+--
+-- Indexes for table `variant`
+--
+ALTER TABLE `variant`
+  ADD PRIMARY KEY (`id_variant`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -253,6 +274,12 @@ ALTER TABLE `users`
   MODIFY `id_user` int NOT NULL AUTO_INCREMENT COMMENT 'Mã user';
 
 --
+-- AUTO_INCREMENT for table `variant`
+--
+ALTER TABLE `variant`
+  MODIFY `id_variant` int NOT NULL AUTO_INCREMENT COMMENT 'Mã biến thể';
+
+--
 -- Constraints for dumped tables
 --
 
@@ -286,7 +313,8 @@ ALTER TABLE `detail_bills`
 -- Constraints for table `products`
 --
 ALTER TABLE `products`
-  ADD CONSTRAINT `products_ibfk_1` FOREIGN KEY (`id_category`) REFERENCES `categories` (`id_category`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `products_ibfk_1` FOREIGN KEY (`id_category`) REFERENCES `categories` (`id_category`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `products_ibfk_2` FOREIGN KEY (`id_variant`) REFERENCES `variant` (`id_variant`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `rates`
