@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 04, 2024 at 01:12 PM
+-- Generation Time: Nov 10, 2024 at 03:04 PM
 -- Server version: 8.0.30
 -- PHP Version: 8.1.10
 
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `bills` (
   `id_bill` int NOT NULL COMMENT 'Mã đơn hàng',
-  `id_customer` int NOT NULL,
+  `id_customer` int NOT NULL COMMENT 'Mã customer',
   `receiver_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Tên người nhận',
   `receiver_phone` varchar(100) COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Số điện thoại người nhận',
   `receiver_address` text COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Địa chỉ người nhận',
@@ -59,11 +59,10 @@ CREATE TABLE `categories` (
 CREATE TABLE `comments` (
   `id_comment` int NOT NULL COMMENT 'Mã bình luận',
   `id_product` int NOT NULL COMMENT 'Mã sản phẩm',
-  `id_user` int NOT NULL,
+  `id_user` int NOT NULL COMMENT 'Mã user',
   `content` text COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Nội dung bình luận ',
-  `censorship` tinyint NOT NULL DEFAULT '0' COMMENT '0 là chưa kiểm duyệt, 1 là đã ẩn, 2 là đã kiểm duyệt và đang đăng bán',
-  `day_post` datetime DEFAULT NULL COMMENT 'Ngày tạo ',
-  `updated_at` datetime DEFAULT NULL COMMENT 'Ngày cập nhật'
+  `censorship` tinyint NOT NULL DEFAULT '0' COMMENT '0 là hiện, 1 là đã ẩn',
+  `day_post` datetime DEFAULT NULL COMMENT 'Ngày tạo '
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -73,12 +72,12 @@ CREATE TABLE `comments` (
 --
 
 CREATE TABLE `customers` (
-  `id_customer` int NOT NULL,
-  `id_user` int DEFAULT NULL,
-  `full_name` varchar(100) COLLATE utf8mb4_general_ci NOT NULL,
-  `phone` varchar(20) COLLATE utf8mb4_general_ci NOT NULL,
-  `address` text COLLATE utf8mb4_general_ci NOT NULL,
-  `note` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL
+  `id_customer` int NOT NULL COMMENT 'Mã customer',
+  `id_user` int DEFAULT NULL COMMENT 'Tên user',
+  `full_name` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Tên',
+  `phone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Số điện thoại',
+  `address` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'Địa chỉ',
+  `note` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Ghi chú(nếu có)'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -112,7 +111,7 @@ CREATE TABLE `products` (
   `discount` int UNSIGNED NOT NULL COMMENT 'Giảm giá của sản phẩm. Mặc định là 0% và giảm tối đa 20%',
   `description` text COLLATE utf8mb4_general_ci COMMENT 'Mô tả của sản phẩm',
   `img_product` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL COMMENT 'Hình ảnh của sản phẩm',
-  `censorship` tinyint NOT NULL DEFAULT '0' COMMENT '0 là chưa kiểm duyệt, 1 là đã ẩn, 2 là đã kiểm duyệt và đang đăng bán',
+  `censorship` tinyint NOT NULL DEFAULT '0' COMMENT '0 là hiện, 1 là đã ẩn',
   `view` int NOT NULL DEFAULT '0' COMMENT 'Số lượt xem của sản phẩm',
   `created_at` datetime DEFAULT NULL COMMENT 'Ngày tạo ',
   `updated_at` datetime DEFAULT NULL COMMENT 'Ngày cập nhật'
@@ -127,7 +126,7 @@ CREATE TABLE `products` (
 CREATE TABLE `rates` (
   `id_rate` int NOT NULL COMMENT 'Mã đánh giá',
   `id_product` int NOT NULL COMMENT 'Mã sản phẩm',
-  `id_user` int NOT NULL,
+  `id_user` int NOT NULL COMMENT 'Mã user',
   `point` float NOT NULL DEFAULT '1' COMMENT 'Điểm đánh giá ',
   `updated_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'Ngày cập nhật'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -175,7 +174,8 @@ ALTER TABLE `comments`
 -- Indexes for table `customers`
 --
 ALTER TABLE `customers`
-  ADD PRIMARY KEY (`id_customer`);
+  ADD PRIMARY KEY (`id_customer`),
+  ADD KEY `id_user` (`id_user`);
 
 --
 -- Indexes for table `detail_bills`
@@ -232,7 +232,7 @@ ALTER TABLE `comments`
 -- AUTO_INCREMENT for table `customers`
 --
 ALTER TABLE `customers`
-  MODIFY `id_customer` int NOT NULL AUTO_INCREMENT;
+  MODIFY `id_customer` int NOT NULL AUTO_INCREMENT COMMENT 'Mã customer';
 
 --
 -- AUTO_INCREMENT for table `detail_bills`
@@ -268,6 +268,12 @@ ALTER TABLE `bills`
 ALTER TABLE `comments`
   ADD CONSTRAINT `comments_ibfk_1` FOREIGN KEY (`id_product`) REFERENCES `products` (`id_product`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `comments_ibfk_2` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `customers`
+--
+ALTER TABLE `customers`
+  ADD CONSTRAINT `customers_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `users` (`id_user`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `detail_bills`
