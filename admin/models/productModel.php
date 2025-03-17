@@ -2,7 +2,7 @@
 class productModel{
     public $conn;
     function __construct() {
-        $this->conn = connDB();
+        $this->conn = connDBAss();
     }
     function product() {
         $sql="SELECT * FROM product JOIN category ON category.id_cat=product.id_cat order by id_pro desc";
